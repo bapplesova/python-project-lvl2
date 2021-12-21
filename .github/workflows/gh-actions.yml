@@ -6,8 +6,7 @@ jobs:
     steps:
       - name: install dependencies
         run: |
-          pip install poetry
-          poetry install
+          poetry build
       - name: run linter and pytest
         run:
           poetry run flake8 gendiff
