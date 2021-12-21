@@ -98,8 +98,10 @@ def generate_diff(new_f, old_f):
         # собираем строку
         diff_json_str += generate_difference_string(prefix, str(i), value)
         if is_both:
-            diff_json_str += generate_difference_string(prefix_second, str(i), value_second)
-    diff_json_str = diff_json_str[:-2] + generate_difference_string(last_run=True)
+            diff_json_str += generate_difference_string(prefix_second,
+                                                        str(i), value_second)
+    diff_json_str = \
+        diff_json_str[:-2] + generate_difference_string(last_run=True)
     return diff_json_str
 
 

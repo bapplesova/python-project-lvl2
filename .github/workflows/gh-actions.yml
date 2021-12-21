@@ -5,4 +5,6 @@ jobs:
     runs-on: test_gendiff
     steps:
       - name: first-step
-        run: make test
+        run: |
+          make lint
+          make test
