@@ -6,6 +6,11 @@ import pathlib
 from pathlib import Path
 
 
+BOOL_KEYWORDS = {'True': 'true',
+                 'False': 'false',
+                 'None': 'null'}
+
+
 def main():
     args = run()
     diff_json = generate_diff(args.first_file, args.second_file)
@@ -43,20 +48,44 @@ def generate_diff(new_f, old_f):
     only_in_second_file = set(old).difference(set(new))
     both_in_files = set(new).intersection(set(old))
 
+    value_second = ''
+
     diff_json_str = '''{\n'''
     for i in all_keys:
+        # ключ присутствует в обоих файлах
         if i in both_in_files:
+            # значение не изменилось
             if new[i] == old[i]:
-                diff_json_str += ' ' * 3 + str(i) + ' : ' + str(new[i]) + '\n'
+                is_both = False
+                prefix = ' ' * 3
+                value = str(new[i])
+            # значения разные
             else:
-                diff_json_str += ' - ' + str(i) + ' : ' + str(new[i]) + '\n'
-                diff_json_str += ' + ' + str(i) + ' : ' + str(old[i]) + '\n'
+                is_both = True
+                prefix = ' - '
+                prefix_second = ' + '
+                value = str(new[i])
+                value_second = str(old[i])
+        # ключ присутствует только в новом файле
         elif i in only_in_first_file:
-            diff_json_str += ' - ' + str(i) + ' : ' + str(new[i]) + '\n'
+            is_both = False
+            prefix = ' - '
+            value = str(new[i])
+        # ключ присутсвует только в старом файле
         elif i in only_in_second_file:
-            diff_json_str += ' + ' + str(i) + ' : ' + str(old[i]) + '\n'
-    diff_json_str += '}'
-    return diff_json_str
+            is_both = False
+            prefix = ' + '
+            value = str(old[i])
+
+        if value in ('True', 'False'):
+            value = value.lower()
+            value_second = value_second.lower()
+
+        # собираем строку
+        diff_json_str += prefix + str(i) + ': ' + value + ',\n'
+        if is_both:
+            diff_json_str += prefix_second + str(i) + ': ' + value_second + ',\n'
+    return diff_json_str[:-2] + '\n}'
 
 
 if __name__ == '__main__':

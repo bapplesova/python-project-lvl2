@@ -1,5 +1,3 @@
-install:
-	poetry install
 gendiff:
 	poetry run gendiff -h
 build:
@@ -17,3 +15,7 @@ reinstall:
 asci:
 	clear
 	asciinema rec
+push:
+	git push -u origin main
+test:
+	poetry run pytest
