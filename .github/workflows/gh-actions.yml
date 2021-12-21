@@ -2,7 +2,7 @@ name: test_gendiff
 on: push
 jobs:
   my-job:
-    runs-on: test_gendiff
+    runs-on: ubuntu-latest
     steps:
       - name: first-step
         run: |
