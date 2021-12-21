@@ -37,6 +37,20 @@ def run():
     return args
 
 
+def generate_difference_string(*args, first_run=False, last_run=False):
+    if len(args) != 0:
+        prefix = args[0]
+        key = args[1]
+        value = str(args[2])
+    if first_run is False and last_run is False:
+        new_part_str = prefix + key + ': ' + value + ',\n'
+    elif first_run:
+        new_part_str = '''{\n'''
+    elif last_run:
+        new_part_str = '\n}'
+    return new_part_str
+
+
 def generate_diff(new_f, old_f):
     new_file = path_file(new_f)
     old_file = path_file(old_f)
@@ -49,8 +63,8 @@ def generate_diff(new_f, old_f):
     both_in_files = set(new).intersection(set(old))
 
     value_second = ''
+    diff_json_str = generate_difference_string(first_run=True)
 
-    diff_json_str = '''{\n'''
     for i in all_keys:
         # ключ присутствует в обоих файлах
         if i in both_in_files:
@@ -82,10 +96,11 @@ def generate_diff(new_f, old_f):
             value_second = value_second.lower()
 
         # собираем строку
-        diff_json_str += prefix + str(i) + ': ' + value + ',\n'
+        diff_json_str += generate_difference_string(prefix, str(i), value)
         if is_both:
-            diff_json_str += prefix_second + str(i) + ': ' + value_second + ',\n'
-    return diff_json_str[:-2] + '\n}'
+            diff_json_str += generate_difference_string(prefix_second, str(i), value_second)
+    diff_json_str = diff_json_str[:-2] + generate_difference_string(last_run=True)
+    return diff_json_str
 
 
 if __name__ == '__main__':
