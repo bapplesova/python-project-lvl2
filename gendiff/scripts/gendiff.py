@@ -7,15 +7,9 @@ from pathlib import Path
 from gendiff.parser import run
 
 
-BOOL_KEYWORDS = {'True': 'true',
-                 'False': 'false',
-                 'None': 'null'}
-
-
 def main():
     args = run()
     diff_json = generate_diff(args.first_file, args.second_file)
-    print(diff_json)
 
 
 def make_path_file(file_path):
@@ -30,11 +24,10 @@ def make_path_file(file_path):
 
 
 def generate_difference_for_key(*args, first_run=False, last_run=False):
-    if len(args) != 0:
+    if len(args) != 0 and first_run is False and last_run is False:
         prefix = args[0]
         key = args[1]
         value = str(args[2])
-    if first_run is False and last_run is False:
         new_part_str = prefix + key + ': ' + value + ',\n'
     elif first_run:
         new_part_str = '''{\n'''
@@ -52,8 +45,17 @@ def generate_diff(new_f, old_f):
     return result
 
 
-def generate_difference(new, old):
+def edit_keyword_conversion(value):
+    bool_keywords = {'True': 'true',
+                     'False': 'false',
+                     'None': 'null'}
+    if value in set(bool_keywords):
+        return bool_keywords[value]
+    else:
+        return value
 
+
+def generate_difference(new, old):
     all_keys = tuple(sorted(set(new).union(set(old))))
     only_in_first_file = set(new).difference(set(old))
     only_in_second_file = set(old).difference(set(new))
@@ -64,33 +66,28 @@ def generate_difference(new, old):
 
     for i in all_keys:
         # ключ присутствует в обоих файлах
-        if i in both_in_files:
+        if i in both_in_files and new[i] == old[i]:
             # значение не изменилось
-            if new[i] == old[i]:
-                is_both = False
-                prefix = ' ' * 3
-                value = str(new[i])
+            is_both = False
+            prefix = ' ' * 3
+            value = edit_keyword_conversion(str(new[i]))
             # значения разные
-            else:
-                is_both = True
-                prefix = ' - '
-                prefix_second = ' + '
-                value = str(new[i])
-                value_second = str(old[i])
+        elif i in both_in_files and new[i] != old[i]:
+            is_both = True
+            prefix = ' - '
+            prefix_second = ' + '
+            value = edit_keyword_conversion(str(new[i]))
+            value_second = edit_keyword_conversion(str(old[i]))
         # ключ присутствует только в новом файле
         elif i in only_in_first_file:
             is_both = False
             prefix = ' - '
-            value = str(new[i])
+            value = edit_keyword_conversion(str(new[i]))
         # ключ присутсвует только в старом файле
         elif i in only_in_second_file:
             is_both = False
             prefix = ' + '
-            value = str(old[i])
-
-        if value in ('True', 'False'):
-            value = value.lower()
-            value_second = value_second.lower()
+            value = edit_keyword_conversion(str(old[i]))
 
         # собираем строку
         diff_json_str += generate_difference_for_key(prefix, str(i), value)
