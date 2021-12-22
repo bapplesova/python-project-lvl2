@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
-import argparse
 import json
 import pathlib
 from pathlib import Path
+
+from gendiff.parser import run
 
 
 BOOL_KEYWORDS = {'True': 'true',
@@ -17,7 +18,7 @@ def main():
     print(diff_json)
 
 
-def path_file(file_path):
+def make_path_file(file_path):
     # Получаем строку, содержащую путь к рабочей директории:
     dir_path = pathlib.Path.cwd()
     if str(dir_path) in file_path:
@@ -28,16 +29,7 @@ def path_file(file_path):
         return path
 
 
-def run():
-    parser = argparse.ArgumentParser(description='Generate diff')
-    parser.add_argument("first_file")
-    parser.add_argument("second_file")
-    parser.add_argument('-f', '--format', help='set format of output')
-    args = parser.parse_args()
-    return args
-
-
-def generate_difference_string(*args, first_run=False, last_run=False):
+def generate_difference_for_key(*args, first_run=False, last_run=False):
     if len(args) != 0:
         prefix = args[0]
         key = args[1]
@@ -52,18 +44,23 @@ def generate_difference_string(*args, first_run=False, last_run=False):
 
 
 def generate_diff(new_f, old_f):
-    new_file = path_file(new_f)
-    old_file = path_file(old_f)
+    new_file = make_path_file(new_f)
+    old_file = make_path_file(old_f)
     new = json.load(open(new_file))
     old = json.load(open(old_file))
+    result = generate_difference(new, old)
+    return result
 
-    all_keys = tuple(sorted(set(new) | set(old)))
+
+def generate_difference(new, old):
+
+    all_keys = tuple(sorted(set(new).union(set(old))))
     only_in_first_file = set(new).difference(set(old))
     only_in_second_file = set(old).difference(set(new))
     both_in_files = set(new).intersection(set(old))
 
     value_second = ''
-    diff_json_str = generate_difference_string(first_run=True)
+    diff_json_str = generate_difference_for_key(first_run=True)
 
     for i in all_keys:
         # ключ присутствует в обоих файлах
@@ -96,12 +93,12 @@ def generate_diff(new_f, old_f):
             value_second = value_second.lower()
 
         # собираем строку
-        diff_json_str += generate_difference_string(prefix, str(i), value)
+        diff_json_str += generate_difference_for_key(prefix, str(i), value)
         if is_both:
-            diff_json_str += generate_difference_string(prefix_second,
-                                                        str(i), value_second)
+            diff_json_str += generate_difference_for_key(prefix_second,
+                                                         str(i), value_second)
     diff_json_str = \
-        diff_json_str[:-2] + generate_difference_string(last_run=True)
+        diff_json_str[:-2] + generate_difference_for_key(last_run=True)
     return diff_json_str
 
 
