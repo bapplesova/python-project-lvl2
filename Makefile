@@ -19,3 +19,6 @@ push:
 	git push -u origin main
 test:
 	poetry run pytest
+test-coverage:
+	coverage run -m pytest
+	coverage report -m

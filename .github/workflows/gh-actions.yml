@@ -1,14 +1,33 @@
-name: test_gendiff
-on: push
+name: test-gendiff
+
+on:
+  - push
+  - pull_request
+
 jobs:
-  my-job:
+  build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9]
     steps:
-      - name: install dependencies
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
         run: |
           pip install poetry
-          poetry build
-      - name: run linter and pytest
-        run:
-          poetry run flake8 gendiff
-          poetry run pytest
+          make install
+      - name: Run linter and pytest
+        run: |
+          make lint
+          make test
+      - name: Test code coverage
+        uses: paambaati/codeclimate-action@v2.7.5
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.LINTER_AND_TESTS_ID }}
+        with:
+          coverageCommand: make test-coverage
+          debug: true
