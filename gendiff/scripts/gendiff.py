@@ -88,8 +88,8 @@ def generate_difference(new, old):
             is_both = False
             prefix = ' + '
             value = edit_keyword_conversion(str(old[i]))
-        diff_json_str += combine_str(str(i), prefix, value,
-                                     is_both, prefix_second, value_second)
+        diff_json_str += combine_str(str(i), prefix, value, is_both,
+                                     prefix_second, value_second)
 
     diff_json_str = \
         diff_json_str[:-2] + generate_difference_for_key(last_run=True)
@@ -99,8 +99,8 @@ def generate_difference(new, old):
 def combine_str(key, prefix, value, is_both, prefix_second, value_second):
     temp_str = generate_difference_for_key(prefix, key, value)
     if is_both:
-        temp_str += generate_difference_for_key(prefix_second,
-                                                key, value_second)
+        temp_str += generate_difference_for_key(prefix_second, key,
+                                                value_second)
     return temp_str
 
 
