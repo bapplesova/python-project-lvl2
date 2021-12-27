@@ -9,7 +9,7 @@ from gendiff.parser import run
 
 def main():
     args = run()
-    diff_json = generate_diff(args.first_file, args.second_file)
+    generate_diff(args.first_file, args.second_file)
 
 
 def make_path_file(file_path):
@@ -62,6 +62,7 @@ def generate_difference(new, old):
     both_in_files = set(new).intersection(set(old))
 
     value_second = ''
+    prefix_second = ' + '
     diff_json_str = generate_difference_for_key(first_run=True)
 
     for i in all_keys:
@@ -75,7 +76,6 @@ def generate_difference(new, old):
         elif i in both_in_files and new[i] != old[i]:
             is_both = True
             prefix = ' - '
-            prefix_second = ' + '
             value = edit_keyword_conversion(str(new[i]))
             value_second = edit_keyword_conversion(str(old[i]))
         # ключ присутствует только в новом файле
@@ -88,15 +88,20 @@ def generate_difference(new, old):
             is_both = False
             prefix = ' + '
             value = edit_keyword_conversion(str(old[i]))
+        diff_json_str += combine_str(str(i), prefix, value,
+                                     is_both, prefix_second, value_second)
 
-        # собираем строку
-        diff_json_str += generate_difference_for_key(prefix, str(i), value)
-        if is_both:
-            diff_json_str += generate_difference_for_key(prefix_second,
-                                                         str(i), value_second)
     diff_json_str = \
         diff_json_str[:-2] + generate_difference_for_key(last_run=True)
     return diff_json_str
+
+
+def combine_str(key, prefix, value, is_both, prefix_second, value_second):
+    temp_str = generate_difference_for_key(prefix, key, value)
+    if is_both:
+        temp_str += generate_difference_for_key(prefix_second,
+                                                key, value_second)
+    return temp_str
 
 
 if __name__ == '__main__':
