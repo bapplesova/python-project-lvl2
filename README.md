@@ -5,3 +5,5 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/9595578054090eb25705/maintainability)](https://codeclimate.com/github/bapplesova/python-project-lvl2/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/9595578054090eb25705/test_coverage)](https://codeclimate.com/github/bapplesova/python-project-lvl2/test_coverage)
 [![asciicast](https://asciinema.org/a/cErI2D0feTn1dYLJhZ1IHC1D3.svg)](https://asciinema.org/a/cErI2D0feTn1dYLJhZ1IHC1D3)
+<br>Step 5<br>
+[![asciicast](https://asciinema.org/a/sLEFSnLMWnkJ5m2PI2CuheUS5.svg)](https://asciinema.org/a/sLEFSnLMWnkJ5m2PI2CuheUS5)

@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-import json
 import pathlib
 from pathlib import Path
 
 from gendiff.parser import run
+from gendiff.file_opener import read_file
 
 
 def main():
@@ -39,9 +39,10 @@ def generate_difference_for_key(*args, first_run=False, last_run=False):
 def generate_diff(new_f, old_f):
     new_file = make_path_file(new_f)
     old_file = make_path_file(old_f)
-    new = json.load(open(new_file))
-    old = json.load(open(old_file))
+    new = read_file(new_file)
+    old = read_file(old_file)
     result = generate_difference(new, old)
+    print('RESULT', result)
     return result
 
 

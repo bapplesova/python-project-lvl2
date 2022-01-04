@@ -11,6 +11,7 @@ packages = [
 python = "^3.9"
 argparse = "^1.4.0"
 pathlib = "^1.0.1"
+PyYAML = "^6.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^4.0.1"
