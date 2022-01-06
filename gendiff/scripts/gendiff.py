@@ -9,7 +9,7 @@ from gendiff.file_opener import read_file
 
 def main():
     args = run()
-    generate_diff(args.first_file, args.second_file)
+    generate_diff(args.first_file, args.second_file, args.format)
 
 
 def make_path_file(file_path):
@@ -36,13 +36,13 @@ def generate_difference_for_key(*args, first_run=False, last_run=False):
     return new_part_str
 
 
-def generate_diff(new_f, old_f):
-    new_file = make_path_file(new_f)
-    old_file = make_path_file(old_f)
-    new = read_file(new_file)
-    old = read_file(old_file)
-    result = generate_difference(new, old)
-    print('RESULT', result)
+def generate_diff(first_file, second_file, format):
+    new_file_path = make_path_file(first_file)
+    old_file_path = make_path_file(second_file)
+    new_file = read_file(new_file_path)
+    old_file = read_file(old_file_path)
+    result = generate_difference(new_file, old_file)
+    print('RESULT \n' + result)
     return result
 
 
@@ -56,45 +56,51 @@ def edit_keyword_conversion(value):
         return value
 
 
+def collect_result(total_dict, all_keys):
+    result_string = '{\n'
+    for key in all_keys:
+        new_value = edit_keyword_conversion(str(total_dict[key][0]))
+        old_value = edit_keyword_conversion(str(total_dict[key][1]))
+        if total_dict[key][0] == total_dict[key][1]:
+            result_string += ' ' * 3 + str(key) + ': ' + new_value + ',\n'
+        elif total_dict[key][1] is None:
+            result_string += ' - ' + str(key) + ': ' + new_value + ',\n'
+        elif total_dict[key][0] is None:
+            result_string += ' + ' + str(key) + ': ' + old_value + ',\n'
+        elif total_dict[key][0] != total_dict[key][1]:
+            result_string += ' - ' + str(key) + ': ' + new_value + ',\n'
+            result_string += ' + ' + str(key) + ': ' + old_value + ',\n'
+    result_string = result_string[:-2] + '\n}'
+    return result_string
+
+
 def generate_difference(new, old):
     all_keys = tuple(sorted(set(new).union(set(old))))
     only_in_first_file = set(new).difference(set(old))
     only_in_second_file = set(old).difference(set(new))
     both_in_files = set(new).intersection(set(old))
 
-    value_second = ''
-    prefix_second = ' + '
-    diff_json_str = generate_difference_for_key(first_run=True)
+    difference_dictionary = {}
 
     for i in all_keys:
-        # ключ присутствует в обоих файлах
+#        if str(type(new[i])).lower() in ["<class 'dict'>"]:
+#            print('dict', new[i])
+#            generate_difference(new[i], old[i])
+        # ключ присутствует в обоих файлах, значение не изменилось
         if i in both_in_files and new[i] == old[i]:
-            # значение не изменилось
-            is_both = False
-            prefix = ' ' * 3
-            value = edit_keyword_conversion(str(new[i]))
-            # значения разные
+            difference_dictionary[i] = [new[i], old[i]]
+        # ключ присутствует в обоих файлах, значения разные
         elif i in both_in_files and new[i] != old[i]:
-            is_both = True
-            prefix = ' - '
-            value = edit_keyword_conversion(str(new[i]))
-            value_second = edit_keyword_conversion(str(old[i]))
+            difference_dictionary[i] = [new[i], old[i]]
         # ключ присутствует только в новом файле
         elif i in only_in_first_file:
-            is_both = False
-            prefix = ' - '
-            value = edit_keyword_conversion(str(new[i]))
+            difference_dictionary[i] = [new[i], None]
         # ключ присутсвует только в старом файле
         elif i in only_in_second_file:
-            is_both = False
-            prefix = ' + '
-            value = edit_keyword_conversion(str(old[i]))
-        diff_json_str += combine_str(str(i), prefix, value, is_both,
-                                     prefix_second, value_second)
+            difference_dictionary[i] = [None, old[i]]
 
-    diff_json_str = \
-        diff_json_str[:-2] + generate_difference_for_key(last_run=True)
-    return diff_json_str
+    result = collect_result(difference_dictionary, all_keys)
+    return result
 
 
 def combine_str(key, prefix, value, is_both, prefix_second, value_second):
