@@ -83,9 +83,8 @@ def generate_difference(new, old):
     difference_dictionary = {}
 
     for i in all_keys:
-#        if str(type(new[i])).lower() in ["<class 'dict'>"]:
-#            print('dict', new[i])
-#            generate_difference(new[i], old[i])
+        # if str(type(new[i])).lower() in ["<class 'dict'>"]:
+        # generate_difference(new[i], old[i])
         # ключ присутствует в обоих файлах, значение не изменилось
         if i in both_in_files and new[i] == old[i]:
             difference_dictionary[i] = [new[i], old[i]]
