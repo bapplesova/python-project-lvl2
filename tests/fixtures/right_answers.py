@@ -1,10 +1,10 @@
 right_answer = '''{
- - follow: false,
-   host: hexlet.io,
- - proxy: 123.234.53.22,
- - timeout: 50,
- + timeout: 20,
- + verbose: true
+  - follow: false
+    host: hexlet.io
+  - proxy: 123.234.53.22
+  - timeout: 50
+  + timeout: 20
+  + verbose: true
 }'''
 
 right_nested_answer = '''{
@@ -49,5 +49,21 @@ right_nested_answer = '''{
             }
         }
         fee: 100500
+    }
+}'''
+
+right_t_answer = '''{
+    group1: {
+        setting1: Value 1
+      - setting2: 200
+      + setting2: 2
+      - setting3: true
+      + setting4: false
+        setting6: {
+            key: value
+        }
+      - setting7: {
+            key7: false
+        }
     }
 }'''
