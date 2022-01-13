@@ -1,26 +1,13 @@
 #!/usr/bin/env python
 
-import pathlib
-from pathlib import Path
-
 from gendiff.parser import run
 from gendiff.file_opener import read_file
+from gendiff.file_opener import make_path_file
 
 
 def main():
     args = run()
     generate_diff(args.first_file, args.second_file, args.format)
-
-
-def make_path_file(file_path):
-    # Получаем строку, содержащую путь к рабочей директории
-    dir_path = pathlib.Path.cwd()
-    if str(dir_path) in file_path:
-        return file_path
-    else:
-        # Объединяем полученную строку с недостающими частями пути
-        path = Path(dir_path, file_path)
-        return path
 
 
 def edit_keyword_conversion(value):
@@ -49,50 +36,60 @@ def generate_diff(first_file, second_file, *format):
     return result
 
 
-def generate_difference(new, old):
-    # формируем множества из ключей файлов
-    all_keys = tuple(sorted(set(new).union(set(old))))
-    only_in_first_file = set(new).difference(set(old))
-    only_in_second_file = set(old).difference(set(new))
-    both_in_files = set(new).intersection(set(old))
+def find_files_difference(analyzed_file, only_in_one_file, prefix):
+    temp_dict = {}
+#    all_keys = set(sorted(set(new_file).union(set(old_file))))
+    for i in only_in_one_file:
+        if isinstance(analyzed_file[i], dict):
+            temp_dict[i] = [prefix, generate_difference(analyzed_file[i],
+                                                        analyzed_file[i])]
+        else:
+            temp_dict[i] = [prefix, analyzed_file[i]]
+    return temp_dict
 
+
+def find_files_intersection(new_file, old_file):
+    temp_dict = {}
+
+    both_in_files = set(new_file).intersection(set(old_file))
+
+    for i in both_in_files:
+        # ключ есть в обоих файлах, оба значения - вложенные словари
+        if isinstance(new_file[i], dict) and isinstance(old_file[i], dict):
+            temp_dict[i] = generate_difference(new_file[i], old_file[i])
+        # ключ присутствует в обоих файлах, значение не изменилось
+        elif new_file[i] == old_file[i]:
+            temp_dict[i] = ['   ', new_file[i]]
+        # ключ присутствует в обоих файлах, значения разные
+        elif new_file[i] != old_file[i] and isinstance(new_file[i], dict):
+            temp_dict[i] = [' ', generate_difference(new_file[i], new_file[i]),
+                            old_file[i]]
+        elif new_file[i] != old_file[i] and isinstance(old_file[i], dict):
+            temp_dict[i] = [' ', new_file[i],
+                            generate_difference(old_file[i], old_file[i])]
+        else:
+            temp_dict[i] = [' ', new_file[i], old_file[i]]
+    return temp_dict
+
+
+def generate_difference(new, old):
     # словарь для хранения отличий:  {ключ : [0 - значение в первом файле,
     # 1 - значение во втором файле, *2 - префикс для отображения]}
-    difference_dictionary = {}
+    total_diff_dictionary = {}
 
-    for i in all_keys:
-        # ключ присутствует в обоих файлах, оба значения - вложенные словари
-        if i in both_in_files and isinstance(new[i], dict) \
-                and isinstance(old[i], dict):
-            difference_dictionary[i] = generate_difference(new[i], old[i])
-        # ключ присутствует в обоих файлах, значение не изменилось
-        elif i in both_in_files and new[i] == old[i]:
-            difference_dictionary[i] = ['   ', new[i]]
-        # ключ присутствует в обоих файлах, значения разные
-        elif i in both_in_files and new[i] != old[i]:
-            if isinstance(new[i], dict):
-                difference_dictionary[i] = [' ', generate_difference(new[i],
-                                                                     new[i]),
-                                            old[i]]
-            elif isinstance(old[i], dict):
-                difference_dictionary[i] = [' ', new[i],
-                                            generate_difference(old[i], old[i])]
-            else:
-                difference_dictionary[i] = [' ', new[i], old[i]]
-        # ключ присутствует только в новом файле
-        elif i in only_in_first_file:
-            if isinstance(new[i], dict):
-                difference_dictionary[i] = [' - ',
-                                            generate_difference(new[i], new[i])]
-            else:
-                difference_dictionary[i] = [' - ', new[i]]
-        # ключ присутсвует только в старом файле
-        elif i in only_in_second_file and isinstance(old[i], dict):
-            difference_dictionary[i] = [' + ',
-                                        generate_difference(old[i], old[i])]
-        elif i in only_in_second_file:
-            difference_dictionary[i] = [' + ', old[i]]
-    return difference_dictionary
+    # формируем множества из ключей файлов
+#    all_keys = set(sorted(set(new).union(set(old))))
+    only_in_first_file = set(new).difference(set(old))
+    only_in_second_file = set(old).difference(set(new))
+
+    total_diff_dictionary = find_files_difference(new,
+                                                  only_in_first_file, ' - ')
+    total_diff_dictionary.update(find_files_difference(old,
+                                                       only_in_second_file,
+                                                       ' + '))
+    total_diff_dictionary.update(find_files_intersection(new, old))
+
+    return total_diff_dictionary
 
 
 def collect_result(total_dict, indent):
