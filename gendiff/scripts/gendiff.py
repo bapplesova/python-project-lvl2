@@ -3,21 +3,13 @@
 from gendiff.parser import run
 from gendiff.file_opener import read_file
 from gendiff.file_opener import make_path_file
+from gendiff.formatters.stylish import collect_stylish_result
 
 
 def main():
     args = run()
+    print('FORMAT', args.format)
     generate_diff(args.first_file, args.second_file, args.format)
-
-
-def edit_keyword_conversion(value):
-    bool_keywords = {'True': 'true',
-                     'False': 'false',
-                     'None': 'null'}
-    if value in set(bool_keywords):
-        return bool_keywords[value]
-    else:
-        return value
 
 
 def generate_diff(first_file, second_file, *format):
@@ -31,7 +23,7 @@ def generate_diff(first_file, second_file, *format):
     # сравниваем 2 файла, формируем словарь с отличиями
     dictionary_difference = generate_difference(new_file, old_file)
     # выводим отличия по заданному виду
-    result = collect_result(dictionary_difference, indent)
+    result = collect_stylish_result(dictionary_difference, indent)
     print('RESULT \n' + result)
     return result
 
@@ -87,45 +79,6 @@ def generate_difference(new, old):
                                                        ' + '))
     total_diff_dictionary.update(find_files_intersection(new, old))
     return total_diff_dictionary
-
-
-def collect_result(total_dict, indent): # noqa: max-complexity: 7
-    all_keys = tuple(sorted(total_dict))
-
-    result_string = '{\n'
-    for key in all_keys:
-        print('key', key, total_dict[key])
-        flag = False
-        temp_indent = indent
-        if isinstance(total_dict[key], dict):
-            temp_indent = indent + 3
-            temp_value = collect_result(total_dict[key], indent + 4)
-            prefix1 = ''
-        elif isinstance(total_dict[key][1], dict) and total_dict[key][0] == ' ':
-            flag = True
-            prefix1 = ' - '
-            prefix2 = ' + '
-            temp_value = collect_result(total_dict[key][1], indent + 4)
-            old_value = edit_keyword_conversion(str(total_dict[key][2]))
-        elif isinstance(total_dict[key][1], dict):
-            prefix1 = total_dict[key][0]
-            temp_value = collect_result(total_dict[key][1], indent + 4)
-        elif total_dict[key][0] == ' ':
-            flag = True
-            prefix1 = ' - '
-            prefix2 = ' + '
-            temp_value = edit_keyword_conversion(str(total_dict[key][1]))
-            old_value = edit_keyword_conversion(str(total_dict[key][2]))
-        else:
-            prefix1 = total_dict[key][0]
-            temp_value = edit_keyword_conversion(str(total_dict[key][1]))
-        result_string += ' ' * temp_indent + prefix1 + str(key) + ': ' \
-                         + temp_value + '\n'
-        if flag is True:
-            result_string += ' ' * temp_indent + prefix2 + str(key) + ': ' \
-                             + old_value + '\n'
-    result_string = result_string[:-1] + '\n' + ' ' * (indent - 1) + '}'
-    return result_string
 
 
 if __name__ == '__main__':
