@@ -89,39 +89,41 @@ def generate_difference(new, old):
     return total_diff_dictionary
 
 
-def collect_result(total_dict, indent):
+def collect_result(total_dict, indent): # noqa: max-complexity: 7
     all_keys = tuple(sorted(total_dict))
+
     result_string = '{\n'
     for key in all_keys:
-        if type(total_dict[key]) is dict:
-            result_string += ' ' * (indent + 3) + str(key) + ': ' \
-                             + collect_result(total_dict[key],
-                                              indent + 4) + '\n'
+        print('key', key, total_dict[key])
+        flag = False
+        temp_indent = indent
+        if isinstance(total_dict[key], dict):
+            temp_indent = indent + 3
+            temp_value = collect_result(total_dict[key], indent + 4)
+            prefix1 = ''
+        elif isinstance(total_dict[key][1], dict) and total_dict[key][0] == ' ':
+            flag = True
+            prefix1 = ' - '
+            prefix2 = ' + '
+            temp_value = collect_result(total_dict[key][1], indent + 4)
+            old_value = edit_keyword_conversion(str(total_dict[key][2]))
+        elif isinstance(total_dict[key][1], dict):
+            prefix1 = total_dict[key][0]
+            temp_value = collect_result(total_dict[key][1], indent + 4)
+        elif total_dict[key][0] == ' ':
+            flag = True
+            prefix1 = ' - '
+            prefix2 = ' + '
+            temp_value = edit_keyword_conversion(str(total_dict[key][1]))
+            old_value = edit_keyword_conversion(str(total_dict[key][2]))
         else:
-            new_value = edit_keyword_conversion(str(total_dict[key][1]))
-            if type(total_dict[key][1]) is dict and total_dict[key][0] == ' ':
-                old_value = edit_keyword_conversion(str(total_dict[key][2]))
-                result_string += ' ' * indent + ' - ' + str(key) + ': ' \
-                                 + collect_result(total_dict[key][1],
-                                                  indent + 4) + '\n'
-                result_string += ' ' * indent + ' + ' + str(key) + ': ' \
-                                 + old_value + '\n'
-
-            elif type(total_dict[key][1]) is dict:
-                result_string += ' ' * indent + total_dict[key][0] + \
-                                 str(key) + ': ' + \
-                                 collect_result(total_dict[key][1],
-                                                indent + 4) + '\n'
-
-            elif total_dict[key][0] == ' ':
-                old_value = edit_keyword_conversion(str(total_dict[key][2]))
-                result_string += ' ' * indent + ' - ' + str(key) + ': ' \
-                                 + new_value + '\n'
-                result_string += ' ' * indent + ' + ' + str(key) + ': ' \
-                                 + old_value + '\n'
-            else:
-                result_string += ' ' * indent + total_dict[key][0] + \
-                                 str(key) + ': ' + new_value + '\n'
+            prefix1 = total_dict[key][0]
+            temp_value = edit_keyword_conversion(str(total_dict[key][1]))
+        result_string += ' ' * temp_indent + prefix1 + str(key) + ': ' \
+                         + temp_value + '\n'
+        if flag is True:
+            result_string += ' ' * temp_indent + prefix2 + str(key) + ': ' \
+                             + old_value + '\n'
     result_string = result_string[:-1] + '\n' + ' ' * (indent - 1) + '}'
     return result_string
 
