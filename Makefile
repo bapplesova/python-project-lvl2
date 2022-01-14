@@ -22,4 +22,4 @@ push:
 test:
 	poetry run pytest -vv
 test-coverage:
-	poetry run pytest --cov=gendiff tests
+	poetry run pytest --cov=gendiff tests --cov-report xml
