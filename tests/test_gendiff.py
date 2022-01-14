@@ -32,3 +32,18 @@ def test_generate_diff_simple_nested_json():
 def test_generate_diff_nested_json():
     diff_result = str(generate_diff('tests/fixtures/f1.json', 'tests/fixtures/f2.json', 'stylish'))
     assert diff_result == right_nested_answer
+
+
+def test_generate_diff_nested_yaml():
+    diff_result = str(generate_diff('tests/fixtures/f1.yaml', 'tests/fixtures/f2.yaml', 'stylish'))
+    assert diff_result == right_nested_answer
+
+
+def test_generate_diff_nested_json_yaml():
+    diff_result = str(generate_diff('tests/fixtures/f1.json', 'tests/fixtures/f2.yaml', 'stylish'))
+    assert diff_result == right_nested_answer
+
+
+def test_generate_diff_nested_yaml_json():
+    diff_result = str(generate_diff('tests/fixtures/f1.yaml', 'tests/fixtures/f2.json', 'stylish'))
+    assert diff_result == right_nested_answer
