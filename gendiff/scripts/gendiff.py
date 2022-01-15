@@ -4,11 +4,11 @@ from gendiff.parser import run
 from gendiff.file_opener import read_file
 from gendiff.file_opener import make_path_file
 from gendiff.formatters.stylish import collect_stylish_result
+from gendiff.formatters.plain import collect_plain_result
 
 
 def main():
     args = run()
-    print('FORMAT', args.format)
     generate_diff(args.first_file, args.second_file, args.format)
 
 
@@ -23,7 +23,13 @@ def generate_diff(first_file, second_file, *format):
     # сравниваем 2 файла, формируем словарь с отличиями
     dictionary_difference = generate_difference(new_file, old_file)
     # выводим отличия по заданному виду
-    result = collect_stylish_result(dictionary_difference, indent)
+#    print('Format ->', format)
+    if str(format[0]).lower() == 'stylish':
+        result = collect_stylish_result(dictionary_difference, indent)
+    elif str(format[0]).lower() == 'plain':
+        result = collect_plain_result(dictionary_difference, '')
+    else:
+        return
     print('RESULT \n' + result)
     return result
 
