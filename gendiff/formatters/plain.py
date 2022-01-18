@@ -14,7 +14,6 @@ def collect_plain_result(total_dict, key_parents):
             end_of_string = get_end_of_string(total_dict[key])
             result += 'Property \'' + key_parents + key + '\' was ' +\
                       end_of_string
-#    print('RES:', result)
     return result
 
 

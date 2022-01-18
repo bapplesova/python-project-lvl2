@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 
+import json
+
 from gendiff.parser import run
 from gendiff.file_opener import read_file
 from gendiff.file_opener import make_path_file
 from gendiff.formatters.stylish import collect_stylish_result
 from gendiff.formatters.plain import collect_plain_result
+from gendiff.formatters.json import collect_json_result
 
 
 def main():
@@ -23,14 +26,16 @@ def generate_diff(first_file, second_file, *format):
     # сравниваем 2 файла, формируем словарь с отличиями
     dictionary_difference = generate_difference(new_file, old_file)
     # выводим отличия по заданному виду
-#    print('Format ->', format)
     if str(format[0]).lower() == 'stylish':
         result = collect_stylish_result(dictionary_difference, indent)
     elif str(format[0]).lower() == 'plain':
         result = collect_plain_result(dictionary_difference, '')
+    elif str(format[0]).lower() == 'json':
+        result = collect_json_result(dictionary_difference)
+        json.dumps(result)
     else:
-        return
-    print('RESULT \n' + result)
+        raise ValueError("Несуществующий формат")
+    print('RESULT \n', result)
     return result
 
 
@@ -56,16 +61,16 @@ def find_files_intersection(new_file, old_file):
             temp_dict[i] = generate_difference(new_file[i], old_file[i])
         # ключ присутствует в обоих файлах, значение не изменилось
         elif new_file[i] == old_file[i]:
-            temp_dict[i] = ['   ', new_file[i]]
+            temp_dict[i] = ["   ", new_file[i]]
         # ключ присутствует в обоих файлах, значения разные
         elif new_file[i] != old_file[i] and isinstance(new_file[i], dict):
-            temp_dict[i] = [' ', generate_difference(new_file[i], new_file[i]),
+            temp_dict[i] = [" ", generate_difference(new_file[i], new_file[i]),
                             old_file[i]]
         elif new_file[i] != old_file[i] and isinstance(old_file[i], dict):
-            temp_dict[i] = [' ', new_file[i],
+            temp_dict[i] = [" ", new_file[i],
                             generate_difference(old_file[i], old_file[i])]
         else:
-            temp_dict[i] = [' ', new_file[i], old_file[i]]
+            temp_dict[i] = [" ", new_file[i], old_file[i]]
     return temp_dict
 
 
@@ -74,7 +79,6 @@ def generate_difference(new, old):
     total_diff_dictionary = {}
 
     # формируем множества из ключей файлов
-#    all_keys = set(sorted(set(new).union(set(old))))
     only_in_first_file = set(new).difference(set(old))
     only_in_second_file = set(old).difference(set(new))
 
