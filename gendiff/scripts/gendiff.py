@@ -26,11 +26,13 @@ def generate_diff(first_file, second_file, *format):
     # сравниваем 2 файла, формируем словарь с отличиями
     dictionary_difference = generate_difference(new_file, old_file)
     # выводим отличия по заданному виду
-    if str(format[0]).lower() == 'stylish':
+    required_format = str(format[0]).lower()
+#    print('FORMAT', format, type(format), required_format)
+    if required_format == 'stylish':
         result = collect_stylish_result(dictionary_difference, indent)
-    elif str(format[0]).lower() == 'plain':
+    elif required_format == 'plain':
         result = collect_plain_result(dictionary_difference, '')
-    elif str(format[0]).lower() == 'json':
+    elif required_format == 'json':
         result = collect_json_result(dictionary_difference)
         json.dumps(result)
     else:
