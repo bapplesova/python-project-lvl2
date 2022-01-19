@@ -27,16 +27,14 @@ def generate_diff(first_file, second_file, *format):
     dictionary_difference = generate_difference(new_file, old_file)
     # выводим отличия по заданному виду
     required_format = str(format[0]).lower()
-#    print('FORMAT', format, type(format), required_format)
-    if required_format == 'stylish':
-        result = collect_stylish_result(dictionary_difference, indent)
-    elif required_format == 'plain':
+    print('FORMAT', format, type(format), required_format)
+    if required_format == 'plain':
         result = collect_plain_result(dictionary_difference, '')
     elif required_format == 'json':
         result = collect_json_result(dictionary_difference)
         json.dumps(result)
     else:
-        raise ValueError("Несуществующий формат")
+        result = collect_stylish_result(dictionary_difference, indent)
     print('RESULT \n', result)
     return result
 
