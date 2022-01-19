@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "hexlet-second"
+name = "hexlet-code"
 version = "0.1.0"
 description = "Generate diff"
 authors = ["Veronika B <bapplesova@gmail.com>"]
