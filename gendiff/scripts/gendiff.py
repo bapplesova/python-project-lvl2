@@ -26,7 +26,8 @@ def generate_diff(first_file, second_file, *format):
     # сравниваем 2 файла, формируем словарь с отличиями
     dictionary_difference = generate_difference(new_file, old_file)
     # выводим отличия по заданному виду
-    required_format = str(format[0]).lower()
+    print('FORMAT', format, type(format))
+    required_format = str(format).lower()
     print('FORMAT', format, type(format), required_format)
     if required_format == 'plain':
         result = collect_plain_result(dictionary_difference, '')
