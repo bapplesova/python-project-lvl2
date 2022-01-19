@@ -10,7 +10,7 @@ def read_file(file_path):
     file_type = get_file_type(file_path)
     if file_type == 'json':
         file_data = json.load(open(file_path))
-    elif file_type in 'yaml':
+    elif file_type in 'yaml' or file_type in 'yml':
         file_data = yaml.load(open(file_path), Loader=SafeLoader)
     return file_data
 

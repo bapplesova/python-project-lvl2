@@ -27,6 +27,7 @@ def generate_diff(first_file, second_file, *format):
     dictionary_difference = generate_difference(new_file, old_file)
     # выводим отличия по заданному виду
     required_format = str(format[0]).lower()
+    print('FORMAT', format, format[0], required_format)
     if required_format == 'plain':
         result = collect_plain_result(dictionary_difference, '')
     elif required_format == 'json':
