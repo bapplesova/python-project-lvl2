@@ -2,6 +2,12 @@ from gendiff.cli import edit_keyword_conversion
 
 
 def collect_stylish_result(total_dict, indent):
+    result = collect_internal_stylish_result(total_dict, indent)
+    result = result.replace(' \n', '\n')
+    return result
+
+
+def collect_internal_stylish_result(total_dict, indent):
     all_keys = tuple(sorted(total_dict))
 
     result_string = '{\n'
@@ -13,7 +19,8 @@ def collect_stylish_result(total_dict, indent):
 
         if isinstance(total_dict[key], dict):
             temp_indent = indent + 3
-            temp_value = collect_stylish_result(total_dict[key], indent + 4)
+            temp_value = collect_internal_stylish_result(total_dict[key],
+                                                         indent + 4)
             prefix1 = ''
         elif total_dict[key][0] == ' ':
             prefix1, prefix2, temp_value, additional_string = \
@@ -22,7 +29,8 @@ def collect_stylish_result(total_dict, indent):
                                         key, indent)
         elif isinstance(total_dict[key][1], dict):
             prefix1 = total_dict[key][0]
-            temp_value = collect_stylish_result(total_dict[key][1], indent + 4)
+            temp_value = collect_internal_stylish_result(total_dict[key][1],
+                                                         indent + 4)
         else:
             prefix1 = total_dict[key][0]
             temp_value = edit_keyword_conversion(str(total_dict[key][1]))
@@ -30,6 +38,7 @@ def collect_stylish_result(total_dict, indent):
                          ': ' + temp_value + '\n' + additional_string
 
     result_string = result_string[:-1] + '\n' + ' ' * (indent - 1) + '}'
+
     return result_string
 
 
@@ -37,7 +46,7 @@ def prepare_different_value(new_value, old_value, key, indent):
     if isinstance(new_value, dict):
         prefix1 = ' - '
         prefix2 = ' + '
-        temp_value = collect_stylish_result(new_value, indent + 4)
+        temp_value = collect_internal_stylish_result(new_value, indent + 4)
         old_value = edit_keyword_conversion(str(old_value))
         additional_string = ' ' * indent + prefix2 + str(key) + \
                             ': ' + old_value + '\n'
@@ -45,7 +54,7 @@ def prepare_different_value(new_value, old_value, key, indent):
         prefix1 = ' - '
         prefix2 = ' + '
         temp_value = edit_keyword_conversion(str(new_value))
-        old_value = collect_stylish_result(old_value, indent + 4)
+        old_value = collect_internal_stylish_result(old_value, indent + 4)
         additional_string = ' ' * indent + prefix2 + str(key) + \
                             ': ' + old_value + '\n'
     else:

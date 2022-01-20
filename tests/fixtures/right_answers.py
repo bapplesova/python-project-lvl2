@@ -54,14 +54,14 @@ right_nested_answer = '''{
     }
     group4: {
       - default: null
-      + default: 
+      + default:
       - foo: 0
       + foo: null
       - isNested: false
       + isNested: none
       + key: false
         nest: {
-          - bar: 
+          - bar:
           + bar: 0
           - isNested: true
         }
