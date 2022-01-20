@@ -12,7 +12,8 @@ def collect_internal_plain_result(total_dict, key_parents):
     for key in all_keys:
         if isinstance(total_dict[key], dict):
             new_key_parents = get_new_key_parents(key_parents, key)
-            result += collect_internal_plain_result(total_dict[key], new_key_parents)
+            result += collect_internal_plain_result(total_dict[key],
+                                                    new_key_parents)
         elif total_dict[key][0] == '   ':
             continue
         else:
