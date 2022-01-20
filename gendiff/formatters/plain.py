@@ -2,12 +2,17 @@ from gendiff.cli import edit_keyword_conversion
 
 
 def collect_plain_result(total_dict, key_parents):
+    result = collect_internal_plain_result(total_dict, key_parents)
+    return result[:-1]
+
+
+def collect_internal_plain_result(total_dict, key_parents):
     result = ''
     all_keys = tuple(sorted(total_dict))
     for key in all_keys:
         if isinstance(total_dict[key], dict):
             new_key_parents = get_new_key_parents(key_parents, key)
-            result += collect_plain_result(total_dict[key], new_key_parents)
+            result += collect_internal_plain_result(total_dict[key], new_key_parents)
         elif total_dict[key][0] == '   ':
             continue
         else:
