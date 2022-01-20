@@ -15,23 +15,14 @@ def collect_stylish_result(total_dict, indent):
             temp_indent = indent + 3
             temp_value = collect_stylish_result(total_dict[key], indent + 4)
             prefix1 = ''
-        elif isinstance(total_dict[key][1], dict) and total_dict[key][0] == ' ':
-            prefix1 = ' - '
-            prefix2 = ' + '
-            temp_value = collect_stylish_result(total_dict[key][1], indent + 4)
-            old_value = edit_keyword_conversion(str(total_dict[key][2]))
-            additional_string = ' ' * temp_indent + prefix2 + str(key) + \
-                                ': ' + old_value + '\n'
+        elif total_dict[key][0] == ' ':
+            prefix1, prefix2, temp_value, additional_string = \
+                prepare_different_value(total_dict[key][1],
+                                        total_dict[key][2],
+                                        key, indent)
         elif isinstance(total_dict[key][1], dict):
             prefix1 = total_dict[key][0]
             temp_value = collect_stylish_result(total_dict[key][1], indent + 4)
-        elif total_dict[key][0] == ' ':
-            prefix1 = ' - '
-            prefix2 = ' + '
-            temp_value = edit_keyword_conversion(str(total_dict[key][1]))
-            old_value = edit_keyword_conversion(str(total_dict[key][2]))
-            additional_string = ' ' * temp_indent + prefix2 + str(key) + \
-                                ': ' + old_value + '\n'
         else:
             prefix1 = total_dict[key][0]
             temp_value = edit_keyword_conversion(str(total_dict[key][1]))
@@ -40,3 +31,28 @@ def collect_stylish_result(total_dict, indent):
 
     result_string = result_string[:-1] + '\n' + ' ' * (indent - 1) + '}'
     return result_string
+
+
+def prepare_different_value(new_value, old_value, key, indent):
+    if isinstance(new_value, dict):
+        prefix1 = ' - '
+        prefix2 = ' + '
+        temp_value = collect_stylish_result(new_value, indent + 4)
+        old_value = edit_keyword_conversion(str(old_value))
+        additional_string = ' ' * indent + prefix2 + str(key) + \
+                            ': ' + old_value + '\n'
+    elif isinstance(old_value, dict):
+        prefix1 = ' - '
+        prefix2 = ' + '
+        temp_value = edit_keyword_conversion(str(new_value))
+        old_value = collect_stylish_result(old_value, indent + 4)
+        additional_string = ' ' * indent + prefix2 + str(key) + \
+                            ': ' + old_value + '\n'
+    else:
+        prefix1 = ' - '
+        prefix2 = ' + '
+        temp_value = edit_keyword_conversion(str(new_value))
+        old_value = edit_keyword_conversion(str(old_value))
+        additional_string = ' ' * indent + prefix2 + str(key) + \
+                            ': ' + old_value + '\n'
+    return prefix1, prefix2, temp_value, additional_string
