@@ -3,7 +3,7 @@ from gendiff.cli import edit_keyword_conversion
 
 def collect_stylish_result(total_dict, indent):
     result = collect_internal_stylish_result(total_dict, indent)
-    result = result.replace(' \n', '\n')
+#    result = result.replace(' \n', '\n')
     return result
 
 

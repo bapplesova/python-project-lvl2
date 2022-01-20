@@ -1,5 +1,3 @@
-import typing
-
 from gendiff.scripts.gendiff import generate_diff
 from tests.fixtures.right_answers import right_answer
 from tests.fixtures.right_answers import right_nested_answer
@@ -128,5 +126,5 @@ def test_generate_diff_json_format_nested_yaml_json():
 
 def test_generate_diff_nested_json():
     diff_result = str(generate_diff('tests/fixtures/f1.json', 'tests/fixtures/f2.json', 'stylish'))
-#    answer = open(ANSWER_STYLISH_NESTED, "r")
-    assert diff_result == right_nested_answer
+    answer = open(ANSWER_STYLISH_NESTED, "r")
+    assert diff_result == answer.read()
