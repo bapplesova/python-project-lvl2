@@ -34,7 +34,7 @@ def generate_diff(first_file, second_file, format='stylish'):
         json.dumps(result)
     else:
         result = collect_stylish_result(dictionary_difference, indent)
-    print('RESULT \n', result)
+    print(result)
     return result
 
 
