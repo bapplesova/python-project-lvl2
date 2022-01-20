@@ -15,7 +15,7 @@ def main():
     generate_diff(args.first_file, args.second_file, args.format)
 
 
-def generate_diff(first_file, second_file, *format):
+def generate_diff(first_file, second_file, format='stylish'):
     indent = 1
     # собираем путь до файла
     new_file_path = make_path_file(first_file)
@@ -26,8 +26,7 @@ def generate_diff(first_file, second_file, *format):
     # сравниваем 2 файла, формируем словарь с отличиями
     dictionary_difference = generate_difference(new_file, old_file)
     # выводим отличия по заданному виду
-    required_format = str(format[0]).lower()
-    print('FORMAT', format, format[0], required_format)
+    required_format = str(format).lower()
     if required_format == 'plain':
         result = collect_plain_result(dictionary_difference, '')
     elif required_format == 'json':
