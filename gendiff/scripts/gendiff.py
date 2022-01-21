@@ -58,18 +58,22 @@ def find_files_intersection(new_file, old_file):
         # ключ есть в обоих файлах, оба значения - вложенные словари
         if isinstance(new_file[i], dict) and isinstance(old_file[i], dict):
             temp_dict[i] = generate_difference(new_file[i], old_file[i])
+            continue
         # ключ присутствует в обоих файлах, значение не изменилось
         elif new_file[i] == old_file[i]:
             temp_dict[i] = ["   ", new_file[i]]
+            continue
         # ключ присутствует в обоих файлах, значения разные
         elif new_file[i] != old_file[i] and isinstance(new_file[i], dict):
-            temp_dict[i] = [" ", generate_difference(new_file[i], new_file[i]),
-                            old_file[i]]
+            value1 = generate_difference(new_file[i], new_file[i])
+            value2 = old_file[i]
         elif new_file[i] != old_file[i] and isinstance(old_file[i], dict):
-            temp_dict[i] = [" ", new_file[i],
-                            generate_difference(old_file[i], old_file[i])]
+            value1 = new_file[i]
+            value2 = generate_difference(old_file[i], old_file[i])
         else:
-            temp_dict[i] = [" ", new_file[i], old_file[i]]
+            value1 = new_file[i]
+            value2 = old_file[i]
+        temp_dict[i] = [" ", value1, value2]
     return temp_dict
 
 
@@ -82,7 +86,8 @@ def generate_difference(new, old):
     only_in_second_file = set(old).difference(set(new))
 
     total_diff_dictionary = find_files_difference(new,
-                                                  only_in_first_file, ' - ')
+                                                  only_in_first_file,
+                                                  ' - ')
     total_diff_dictionary.update(find_files_difference(old,
                                                        only_in_second_file,
                                                        ' + '))
