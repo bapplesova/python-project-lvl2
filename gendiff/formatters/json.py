@@ -20,7 +20,8 @@ def collect_internal_json_res(total_dict):
         elif total_dict[key][0] == ' ':
             prefix = ' - '
             value = get_value(total_dict[key][1])
-            additional_string = '" + ' + key + '": ' + get_value(total_dict[key][2]) + ','
+            additional_string = '" + ' + key + \
+                                '": ' + get_value(total_dict[key][2]) + ','
         else:
             prefix = total_dict[key][0]
             value = get_value(total_dict[key][1])

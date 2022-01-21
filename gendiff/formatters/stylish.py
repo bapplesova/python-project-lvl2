@@ -14,7 +14,7 @@ def collect_stylish_result(total_dict, indent):
         if isinstance(total_dict[key], dict):
             temp_indent = indent + 3
             temp_value = collect_stylish_result(total_dict[key],
-                                                         indent + 4)
+                                                indent + 4)
             prefix1 = ''
         elif total_dict[key][0] == ' ':
             prefix1, prefix2, temp_value, additional_string = \
@@ -24,7 +24,7 @@ def collect_stylish_result(total_dict, indent):
         elif isinstance(total_dict[key][1], dict):
             prefix1 = total_dict[key][0]
             temp_value = collect_stylish_result(total_dict[key][1],
-                                                         indent + 4)
+                                                indent + 4)
         else:
             prefix1 = total_dict[key][0]
             temp_value = edit_keyword_conversion(str(total_dict[key][1]))
