@@ -11,16 +11,20 @@ def collect_json_result(total_dict):
 def collect_internal_json_res(total_dict):
     result = make_brackets(True)
     all_keys = tuple(sorted(total_dict))
+
     for key in all_keys:
+        additional_string = ''
         if isinstance(total_dict[key], dict):
-            result += '"' + key + '": ' + collect_internal_json_res(
-                total_dict[key])
+            prefix = ''
+            value = collect_internal_json_res(total_dict[key])
         elif total_dict[key][0] == ' ':
-            result += '" - ' + key + '": ' + get_value(total_dict[key][1]) + ','
-            result += '" + ' + key + '": ' + get_value(total_dict[key][2]) + ','
+            prefix = ' - '
+            value = get_value(total_dict[key][1])
+            additional_string = '" + ' + key + '": ' + get_value(total_dict[key][2]) + ','
         else:
-            result += '"' + total_dict[key][0] + key + '": ' + get_value(
-                total_dict[key][1]) + ','
+            prefix = total_dict[key][0]
+            value = get_value(total_dict[key][1])
+        result += '"' + prefix + key + '": ' + value + ',' + additional_string
     result = result[:-1] + make_brackets(False)
     return result
 
