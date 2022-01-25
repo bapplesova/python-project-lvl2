@@ -1,6 +1,6 @@
 ### Project description:
 This project compares 2 files and displays differences in 3 formats: stylish, plain, json. Сomparison is available for *.json and *.yaml/yml files.
-![alt text](https://github.com/bapplesova/python-project-lvl2/formats.png)
+![alt text](https://github.com/bapplesova/python-project-lvl2/blob/main/formats.png)
 
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/bapplesova/python-project-lvl2/workflows/hexlet-check/badge.svg)](https://github.com/bapplesova/python-project-lvl2/actions)
