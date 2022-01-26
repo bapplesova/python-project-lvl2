@@ -1,11 +1,22 @@
-import argparse
+#!/usr/bin/env python
+import json
+import yaml
+from yaml.loader import SafeLoader
 
 
-def run():
-    parser = argparse.ArgumentParser(description='Generate diff')
-    parser.add_argument("first_file")
-    parser.add_argument("second_file")
-    parser.add_argument('-f', '--format', default='stylish',
-                        help='set format of output (default: stylish)')
-    args = parser.parse_args()
-    return args
+def read_file(file_path, file_type):
+    if file_type == 'json':
+        file_data = json.load(open(file_path))
+    elif file_type in 'yaml' or file_type in 'yml':
+        file_data = yaml.load(open(file_path), Loader=SafeLoader)
+    return file_data
+
+
+def get_file_type(file_path):
+    file_extension = str(file_path).split('.')
+    if file_extension[-1] == 'json':
+        return 'json'
+    elif file_extension[-1] in ('yaml', 'yml'):
+        return 'yaml'
+    else:
+        raise Exception('Invalid file format.')
