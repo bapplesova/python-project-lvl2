@@ -19,3 +19,11 @@ def edit_keyword_conversion(value):
         return bool_keywords[value]
     else:
         return value
+
+
+def print_prefix(status):
+    prefix_dict = {'removed': ' - ',
+                   'added': ' + ',
+                   'unchanged': '   ',
+                   'changed': ' '}
+    return prefix_dict[status]

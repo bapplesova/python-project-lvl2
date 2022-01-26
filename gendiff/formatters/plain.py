@@ -14,7 +14,7 @@ def collect_internal_plain_result(total_dict, key_parents):
             new_key_parents = get_new_key_parents(key_parents, key)
             result += collect_internal_plain_result(total_dict[key],
                                                     new_key_parents)
-        elif total_dict[key][0] == '   ':
+        elif total_dict[key][0] == 'unchanged':
             continue
         else:
             end_of_string = get_end_of_string(total_dict[key])
@@ -34,14 +34,16 @@ def get_new_key_parents(key_parents, key):
 def get_end_of_string(total_dict_key):
     id_new_value = 1
     value = get_value(total_dict_key, id_new_value)
-    if total_dict_key[0] == ' - ':
-        end_of_string = 'removed\n'
-    elif total_dict_key[0] == ' + ':
+    if total_dict_key[0] == 'removed':
+        end_of_string = total_dict_key[0] + '\n'
+    elif total_dict_key[0] == 'added':
         end_of_string = 'added with value: ' + value + '\n'
-    elif total_dict_key[0] == ' ':
+    elif total_dict_key[0] == 'edited':
         id_old_value = 2
         value2 = get_value(total_dict_key, id_old_value)
         end_of_string = 'updated. From ' + value + ' to ' + value2 + '\n'
+    else:
+        end_of_string = ''
     return end_of_string
 
 

@@ -1,4 +1,5 @@
 from gendiff.cli import edit_keyword_conversion
+from gendiff.cli import print_prefix
 
 
 def collect_stylish_result(total_dict, indent):
@@ -16,17 +17,17 @@ def collect_stylish_result(total_dict, indent):
             temp_value = collect_stylish_result(total_dict[key],
                                                 indent + 4)
             prefix1 = ''
-        elif total_dict[key][0] == ' ':
+        elif total_dict[key][0] == 'edited':
             prefix1, prefix2, temp_value, additional_string = \
                 prepare_different_value(total_dict[key][1],
                                         total_dict[key][2],
                                         key, indent)
         elif isinstance(total_dict[key][1], dict):
-            prefix1 = total_dict[key][0]
+            prefix1 = print_prefix(total_dict[key][0])
             temp_value = collect_stylish_result(total_dict[key][1],
                                                 indent + 4)
         else:
-            prefix1 = total_dict[key][0]
+            prefix1 = print_prefix(total_dict[key][0])
             temp_value = edit_keyword_conversion(str(total_dict[key][1]))
         result_string += ' ' * temp_indent + prefix1 + str(key) +\
                          ': ' + temp_value + '\n' + additional_string

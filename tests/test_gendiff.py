@@ -1,4 +1,5 @@
 import pytest
+import json
 from gendiff.scripts.gendiff import generate_diff
 
 file1_simple_json = 'tests/fixtures/file1.json'
@@ -17,10 +18,8 @@ format_json = 'json'
 
 file_stylish_simple = 'tests/fixtures/answer_stylish_simple'
 file_stylish_nested = 'tests/fixtures/answer_stylish_nested'
-
 file_plain_simple = 'tests/fixtures/answer_plain_simple'
 file_plain_nested = 'tests/fixtures/answer_plain_nested'
-
 file_json_simple = 'tests/fixtures/answer_json_simple.json'
 file_json_nested = 'tests/fixtures/answer_json_nested.json'
 
@@ -58,7 +57,10 @@ file_json_nested = 'tests/fixtures/answer_json_nested.json'
      (file1_nested_yaml, file2_nested_yaml, format_json, file_json_nested)])
 def test_generate(file1, file2, output_format, answer_file):
     diff_result = str(generate_diff(file1, file2, output_format))
-    assert diff_result == get_answer(answer_file)
+    if output_format == 'json':
+        assert json.loads(diff_result) == json.load(open(answer_file))
+    else:
+        assert diff_result == get_answer(answer_file)
 
 
 def get_answer(file_name):
