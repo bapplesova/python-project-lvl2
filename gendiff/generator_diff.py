@@ -18,7 +18,6 @@ def generate_diff(first_file, second_file, format='stylish'):
     # выводим отличия по заданному виду
     result = choose_format(dictionary_difference, required_format)
     print(result)
-    print('TYPE', type(result))
     return result
 
 

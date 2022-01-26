@@ -11,7 +11,6 @@ def choose_format(dictionary_difference, required_format):
         result = collect_plain_result(dictionary_difference, '')
     elif required_format == 'json':
         result = json.dumps(dictionary_difference)
-        print('TYPE_CHOOSE', type(result))
     else:
         result = collect_stylish_result(dictionary_difference, indent)
     return result
