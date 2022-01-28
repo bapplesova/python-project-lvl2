@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from gendiff.parser import open_file
 from gendiff.parser import read_file
 from gendiff.parser import get_file_type
 from gendiff.formatters.format_chooser import choose_format
@@ -10,8 +11,10 @@ def generate_diff(first_file, second_file, format='stylish'):
     new_file_type = get_file_type(first_file)
     old_file_type = get_file_type(second_file)
     # считываем файлы
-    new_file = read_file(first_file, new_file_type)
-    old_file = read_file(second_file, old_file_type)
+    first_file_data = open_file(first_file)
+    second_file_data = open_file(second_file)
+    new_file = read_file(first_file_data, new_file_type)
+    old_file = read_file(second_file_data, old_file_type)
     # сравниваем 2 файла, формируем словарь с отличиями
     dictionary_difference = generate_difference(new_file, old_file)
     required_format = str(format).lower()

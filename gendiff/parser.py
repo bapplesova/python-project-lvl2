@@ -4,11 +4,16 @@ import yaml
 from yaml.loader import SafeLoader
 
 
-def read_file(file_path, file_type):
+def open_file(file_path):
+    files_data = open(file_path)
+    return files_data
+
+
+def read_file(file_data, file_type):
     if file_type == 'json':
-        file_data = json.load(open(file_path))
+        file_data = json.load(file_data)
     elif file_type in 'yaml' or file_type in 'yml':
-        file_data = yaml.load(open(file_path), Loader=SafeLoader)
+        file_data = yaml.load(file_data, Loader=SafeLoader)
     return file_data
 
 
