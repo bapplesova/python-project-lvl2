@@ -38,7 +38,7 @@ def get_end_of_string(total_dict_key):
         end_of_string = total_dict_key[0] + '\n'
     elif total_dict_key[0] == 'added':
         end_of_string = 'added with value: ' + value + '\n'
-    elif total_dict_key[0] == 'edited':
+    elif total_dict_key[0] == 'changed':
         id_old_value = 2
         value2 = get_value(total_dict_key, id_old_value)
         end_of_string = 'updated. From ' + value + ' to ' + value2 + '\n'

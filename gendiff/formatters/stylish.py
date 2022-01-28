@@ -7,6 +7,7 @@ def collect_stylish_result(total_dict, indent):
 
     result_string = '{\n'
     for key in all_keys:
+        print('KEY', key, total_dict[key])
         # отступ для печати вложенных данных
         temp_indent = indent
         # доп.строка для печати второго значения когда данные изменены
@@ -17,7 +18,7 @@ def collect_stylish_result(total_dict, indent):
             temp_value = collect_stylish_result(total_dict[key],
                                                 indent + 4)
             prefix1 = ''
-        elif total_dict[key][0] == 'edited':
+        elif total_dict[key][0] == 'changed':
             prefix1, prefix2, temp_value, additional_string = \
                 prepare_different_value(total_dict[key][1],
                                         total_dict[key][2],
