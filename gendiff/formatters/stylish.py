@@ -7,7 +7,6 @@ def collect_stylish_result(total_dict, indent):
 
     result_string = '{\n'
     for key in all_keys:
-        print('KEY', key, total_dict[key])
         # отступ для печати вложенных данных
         temp_indent = indent
         # доп.строка для печати второго значения когда данные изменены
