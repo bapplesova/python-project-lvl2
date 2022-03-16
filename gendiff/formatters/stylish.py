@@ -1,8 +1,8 @@
-from gendiff.cli import edit_keyword_conversion
-from gendiff.cli import print_prefix
+from gendiff.data_mapping import map_bool_keyword
+from gendiff.data_mapping import map_prefix
 
 
-def collect_stylish_result(total_dict, indent):
+def format_stylish(total_dict, indent):
     all_keys = tuple(sorted(total_dict))
 
     result_string = '{\n'
@@ -14,8 +14,8 @@ def collect_stylish_result(total_dict, indent):
 
         if isinstance(total_dict[key], dict):
             temp_indent = indent + 3
-            temp_value = collect_stylish_result(total_dict[key],
-                                                indent + 4)
+            temp_value = format_stylish(total_dict[key],
+                                        indent + 4)
             prefix1 = ''
         elif total_dict[key][0] == 'changed':
             prefix1, prefix2, temp_value, additional_string = \
@@ -23,12 +23,12 @@ def collect_stylish_result(total_dict, indent):
                                         total_dict[key][2],
                                         key, indent)
         elif isinstance(total_dict[key][1], dict):
-            prefix1 = print_prefix(total_dict[key][0])
-            temp_value = collect_stylish_result(total_dict[key][1],
-                                                indent + 4)
+            prefix1 = map_prefix(total_dict[key][0])
+            temp_value = format_stylish(total_dict[key][1],
+                                        indent + 4)
         else:
-            prefix1 = print_prefix(total_dict[key][0])
-            temp_value = edit_keyword_conversion(str(total_dict[key][1]))
+            prefix1 = map_prefix(total_dict[key][0])
+            temp_value = map_bool_keyword(str(total_dict[key][1]))
         result_string += ' ' * temp_indent + prefix1 + str(key) +\
                          ': ' + temp_value + '\n' + additional_string
 
@@ -40,20 +40,20 @@ def prepare_different_value(new_value, old_value, key, indent):
     if isinstance(new_value, dict):
         prefix1 = ' - '
         prefix2 = ' + '
-        temp_value = collect_stylish_result(new_value, indent + 4)
-        old_value = edit_keyword_conversion(str(old_value))
+        temp_value = format_stylish(new_value, indent + 4)
+        old_value = map_bool_keyword(str(old_value))
 
     elif isinstance(old_value, dict):
         prefix1 = ' - '
         prefix2 = ' + '
-        temp_value = edit_keyword_conversion(str(new_value))
-        old_value = collect_stylish_result(old_value, indent + 4)
+        temp_value = map_bool_keyword(str(new_value))
+        old_value = format_stylish(old_value, indent + 4)
 
     else:
         prefix1 = ' - '
         prefix2 = ' + '
-        temp_value = edit_keyword_conversion(str(new_value))
-        old_value = edit_keyword_conversion(str(old_value))
+        temp_value = map_bool_keyword(str(new_value))
+        old_value = map_bool_keyword(str(old_value))
 
     additional_string = ' ' * indent + prefix2 + str(key) + \
                         ': ' + old_value + '\n'

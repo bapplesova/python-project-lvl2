@@ -1,19 +1,19 @@
-from gendiff.cli import edit_keyword_conversion
+from gendiff.data_mapping import map_bool_keyword
 
 
-def collect_plain_result(total_dict, key_parents):
-    result = collect_internal_plain_result(total_dict, key_parents)
+def fromat_plain(total_dict, key_parents):
+    result = format_plain_internal(total_dict, key_parents)
     return result[:-1]
 
 
-def collect_internal_plain_result(total_dict, key_parents):
+def format_plain_internal(total_dict, key_parents):
     result = ''
     all_keys = tuple(sorted(total_dict))
     for key in all_keys:
         if isinstance(total_dict[key], dict):
             new_key_parents = get_new_key_parents(key_parents, key)
-            result += collect_internal_plain_result(total_dict[key],
-                                                    new_key_parents)
+            result += format_plain_internal(total_dict[key],
+                                            new_key_parents)
         elif total_dict[key][0] == 'unchanged':
             continue
         else:
@@ -53,4 +53,4 @@ def get_value(dict_key, item_id):
     elif isinstance(dict_key[item_id], str):
         return '\'' + dict_key[item_id] + '\''
     else:
-        return edit_keyword_conversion(str(dict_key[item_id]))
+        return map_bool_keyword(str(dict_key[item_id]))
