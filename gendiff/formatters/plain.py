@@ -1,7 +1,7 @@
-from gendiff.data_mapping import map_bool_keyword
+from gendiff.data_mapping import bool_to_str
 
 
-def fromat_plain(total_dict, key_parents):
+def format_plain(total_dict, key_parents):
     result = format_plain_internal(total_dict, key_parents)
     return result[:-1]
 
@@ -53,4 +53,4 @@ def get_value(dict_key, item_id):
     elif isinstance(dict_key[item_id], str):
         return '\'' + dict_key[item_id] + '\''
     else:
-        return map_bool_keyword(str(dict_key[item_id]))
+        return bool_to_str(str(dict_key[item_id]))

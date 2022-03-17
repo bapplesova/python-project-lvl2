@@ -1,4 +1,4 @@
-from gendiff.data_mapping import map_bool_keyword
+from gendiff.data_mapping import bool_to_str
 from gendiff.data_mapping import map_prefix
 
 
@@ -28,7 +28,7 @@ def format_stylish(total_dict, indent):
                                         indent + 4)
         else:
             prefix1 = map_prefix(total_dict[key][0])
-            temp_value = map_bool_keyword(str(total_dict[key][1]))
+            temp_value = bool_to_str(str(total_dict[key][1]))
         result_string += ' ' * temp_indent + prefix1 + str(key) +\
                          ': ' + temp_value + '\n' + additional_string
 
@@ -41,19 +41,19 @@ def prepare_different_value(new_value, old_value, key, indent):
         prefix1 = ' - '
         prefix2 = ' + '
         temp_value = format_stylish(new_value, indent + 4)
-        old_value = map_bool_keyword(str(old_value))
+        old_value = bool_to_str(str(old_value))
 
     elif isinstance(old_value, dict):
         prefix1 = ' - '
         prefix2 = ' + '
-        temp_value = map_bool_keyword(str(new_value))
+        temp_value = bool_to_str(str(new_value))
         old_value = format_stylish(old_value, indent + 4)
 
     else:
         prefix1 = ' - '
         prefix2 = ' + '
-        temp_value = map_bool_keyword(str(new_value))
-        old_value = map_bool_keyword(str(old_value))
+        temp_value = bool_to_str(str(new_value))
+        old_value = bool_to_str(str(old_value))
 
     additional_string = ' ' * indent + prefix2 + str(key) + \
                         ': ' + old_value + '\n'

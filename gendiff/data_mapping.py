@@ -1,4 +1,4 @@
-def map_bool_keyword(value):
+def bool_to_str(value):
     bool_keywords = {'True': 'true',
                      'False': 'false',
                      'None': 'null'}
