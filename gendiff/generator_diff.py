@@ -12,7 +12,7 @@ def generate_diff(first_file, second_file, format='stylish'):
     new_file = parse(first_file_data, new_file_type)
     old_file = parse(second_file_data, old_file_type)
     dictionary_difference = generate_diff_dict(new_file, old_file)
-    print('!!!DD!!!', dictionary_difference)
+#    print('!!!DD!!!', dictionary_difference)
 
     result = format_diff(dictionary_difference, format)
     return result
