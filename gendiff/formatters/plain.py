@@ -1,56 +1,30 @@
 from gendiff.data_mapping import bool_to_str
 
 
-def format_plain(total_dict, key_parents):
-    result = format_plain_internal(total_dict, key_parents)
-    return result[:-1]
-
-
-def format_plain_internal(total_dict, key_parents):
-    result = ''
+def format_plain(total_dict, key_parents, lines=''):
+    each_line = "Property '" + key_parents
     all_keys = tuple(sorted(total_dict))
     for key in all_keys:
-        if isinstance(total_dict[key], dict):
-            new_key_parents = get_new_key_parents(key_parents, key)
-            result += format_plain_internal(total_dict[key],
-                                            new_key_parents)
-        elif total_dict[key][0] == 'unchanged':
-            continue
-        else:
-            end_of_string = get_end_of_string(total_dict[key])
-            result += 'Property \'' + key_parents + key + '\' was ' +\
-                      end_of_string
-    return result
+        value = total_dict[key]
+        if isinstance(value, list):
+            if value[0] == 'removed':
+                lines += f"{each_line}{key}' was removed\n"
+            elif value[0] == 'added':
+                if isinstance(value[-1],dict):
+                    lines += f"{each_line}{key}' was added with value: [complex value]\n"
+                else:
+                    lines += f"{each_line}{key}' was added with value: {format_value(value[-1])}\n"
+            elif value[0] == 'changed':
+                lines += f"{each_line}{key}' was updated. From {format_value(value[1])} to {format_value(value[2])}\n"
+        elif isinstance(value, dict):
+            lines += format_plain(value, key_parents + key + '.', '')
+    return lines
 
 
-def get_new_key_parents(key_parents, key):
-    if key_parents == '':
-        new_key_parents = key + '.'
-    else:
-        new_key_parents = key_parents + key + '.'
-    return new_key_parents
-
-
-def get_end_of_string(total_dict_key):
-    id_new_value = 1
-    value = get_value(total_dict_key, id_new_value)
-    if total_dict_key[0] == 'removed':
-        end_of_string = total_dict_key[0] + '\n'
-    elif total_dict_key[0] == 'added':
-        end_of_string = 'added with value: ' + value + '\n'
-    elif total_dict_key[0] == 'changed':
-        id_old_value = 2
-        value2 = get_value(total_dict_key, id_old_value)
-        end_of_string = 'updated. From ' + value + ' to ' + value2 + '\n'
-    else:
-        end_of_string = ''
-    return end_of_string
-
-
-def get_value(dict_key, item_id):
-    if isinstance(dict_key[item_id], dict):
+def format_value(value):
+    if isinstance(value, str):
+        return "'" + value + "'"
+    elif isinstance(value, dict):
         return '[complex value]'
-    elif isinstance(dict_key[item_id], str):
-        return '\'' + dict_key[item_id] + '\''
     else:
-        return bool_to_str(str(dict_key[item_id]))
+        return bool_to_str(str(value))
