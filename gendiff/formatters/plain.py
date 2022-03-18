@@ -11,18 +11,28 @@ def format_plain_internal(total_dict, key_parents, lines=''):
     for key in all_keys:
         value = total_dict[key]
         if isinstance(value, list):
-            if value[0] == 'removed':
-                lines += f"{each_line}{key}' was removed\n"
-            elif value[0] == 'added':
-                if isinstance(value[-1],dict):
-                    lines += f"{each_line}{key}' was added with value: [complex value]\n"
-                else:
-                    lines += f"{each_line}{key}' was added with value: {format_value(value[-1])}\n"
-            elif value[0] == 'changed':
-                lines += f"{each_line}{key}' was updated. From {format_value(value[1])} to {format_value(value[2])}\n"
+            lines += get_list_value(value, each_line, key)
         elif isinstance(value, dict):
             lines += format_plain_internal(value, key_parents + key + '.', '')
     return lines
+
+
+def get_list_value(value, each_line, key):
+    line = ''
+    if value[0] == 'removed':
+        line += f"{each_line}{key}' was removed\n"
+    elif value[0] == 'added':
+        if isinstance(value[-1], dict):
+            line += f"{each_line}{key}" \
+                    f"' was added with value: [complex value]\n"
+        else:
+            line += f"{each_line}{key}' was added with value: " \
+                    f"{format_value(value[-1])}\n"
+    elif value[0] == 'changed':
+        line += f"{each_line}{key}' was updated. " \
+                f"From {format_value(value[1])} to " \
+                f"{format_value(value[2])}\n"
+    return line
 
 
 def format_value(value):
