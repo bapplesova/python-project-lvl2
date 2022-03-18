@@ -28,7 +28,7 @@ def get_list_value(value, each_line, key):
         else:
             line += f"{each_line}{key}' was added with value: " \
                     f"{format_value(value[-1])}\n"
-    elif value[0] == 'changed':
+    else:  # value[0] == 'changed':
         line += f"{each_line}{key}' was updated. " \
                 f"From {format_value(value[1])} to " \
                 f"{format_value(value[2])}\n"
