@@ -21,14 +21,13 @@ def get_list_value(value, each_line, key):
     line = ''
     if value[0] == 'removed':
         line += f"{each_line}{key}' was removed\n"
+    elif value[0] == 'added' and isinstance(value[-1], dict):
+        line += f"{each_line}{key}" \
+                f"' was added with value: [complex value]\n"
     elif value[0] == 'added':
-        if isinstance(value[-1], dict):
-            line += f"{each_line}{key}" \
-                    f"' was added with value: [complex value]\n"
-        else:
-            line += f"{each_line}{key}' was added with value: " \
-                    f"{format_value(value[-1])}\n"
-    else:  # value[0] == 'changed':
+        line += f"{each_line}{key}' was added with value: " \
+                f"{format_value(value[-1])}\n"
+    elif value[0] == 'changed':
         line += f"{each_line}{key}' was updated. " \
                 f"From {format_value(value[1])} to " \
                 f"{format_value(value[2])}\n"
