@@ -30,7 +30,8 @@ def format_stylish(total_dict, indent):
             prefix1 = map_prefix(total_dict[key][0])
             temp_value = bool_to_str(str(total_dict[key][1]))
         result_indent = ' ' * temp_indent
-        result_string += f"{result_indent}{prefix1}{str(key)}: {temp_value}\n{additional_string}"
+        result_string += f"{result_indent}{prefix1}{str(key)}: " \
+                         f"{temp_value}\n{additional_string}"
 
     total_indent = ' ' * (indent - 1)
     result_string = f"{result_string[:-1]}\n{total_indent}" + '}'
