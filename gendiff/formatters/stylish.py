@@ -19,9 +19,9 @@ def format_stylish(total_dict, indent):
             prefix1 = ''
         elif total_dict[key][0] == 'changed':
             prefix1, prefix2, temp_value, additional_string = \
-                prepare_different_value(total_dict[key][1],
-                                        total_dict[key][2],
-                                        key, indent)
+                get_changed_values(total_dict[key][1],
+                                   total_dict[key][2],
+                                   key, indent)
         elif isinstance(total_dict[key][1], dict):
             prefix1 = map_prefix(total_dict[key][0])
             temp_value = format_stylish(total_dict[key][1],
@@ -29,14 +29,15 @@ def format_stylish(total_dict, indent):
         else:
             prefix1 = map_prefix(total_dict[key][0])
             temp_value = bool_to_str(str(total_dict[key][1]))
-        result_string += ' ' * temp_indent + prefix1 + str(key) +\
-                         ': ' + temp_value + '\n' + additional_string
+        result_indent = ' ' * temp_indent
+        result_string += f"{result_indent}{prefix1}{str(key)}: {temp_value}\n{additional_string}"
 
-    result_string = result_string[:-1] + '\n' + ' ' * (indent - 1) + '}'
+    total_indent = ' ' * (indent - 1)
+    result_string = f"{result_string[:-1]}\n{total_indent}" + '}'
     return result_string
 
 
-def prepare_different_value(new_value, old_value, key, indent):
+def get_changed_values(new_value, old_value, key, indent):
     if isinstance(new_value, dict):
         prefix1 = ' - '
         prefix2 = ' + '
@@ -55,6 +56,8 @@ def prepare_different_value(new_value, old_value, key, indent):
         temp_value = bool_to_str(str(new_value))
         old_value = bool_to_str(str(old_value))
 
-    additional_string = ' ' * indent + prefix2 + str(key) + \
-                        ': ' + old_value + '\n'
+    total_indent = ' ' * indent
+    additional_string = f"{total_indent}{prefix2}{str(key)}: {old_value}\n"
+#    additional_string = ' ' * indent + prefix2 + str(key) + \
+#                        ': ' + old_value + '\n'
     return prefix1, prefix2, temp_value, additional_string
