@@ -59,6 +59,4 @@ def get_changed_values(new_value, old_value, key, indent):
 
     total_indent = ' ' * indent
     additional_string = f"{total_indent}{prefix2}{str(key)}: {old_value}\n"
-#    additional_string = ' ' * indent + prefix2 + str(key) + \
-#                        ': ' + old_value + '\n'
     return prefix1, prefix2, temp_value, additional_string

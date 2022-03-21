@@ -6,9 +6,6 @@ from yaml.loader import SafeLoader
 def read_file(file_path):
     with open(file_path) as file:
         return file.read()
-# def read_file(file_path):
-#    files_data = open(file_path)
-#    return files_data
 
 
 def parse(file_data, file_type):
