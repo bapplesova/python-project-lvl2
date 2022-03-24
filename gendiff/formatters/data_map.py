@@ -6,11 +6,3 @@ def bool_to_str(value):
         return bool_keywords[value]
     else:
         return value
-
-
-def map_prefix(status):
-    prefix_dict = {'removed': ' - ',
-                   'added': ' + ',
-                   'unchanged': '   ',
-                   'changed': ' '}
-    return prefix_dict[status]

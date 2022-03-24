@@ -1,8 +1,12 @@
-from gendiff.data_mapping import bool_to_str
-from gendiff.data_mapping import map_prefix
+from gendiff.formatters.data_map import bool_to_str
 
 
-def format_stylish(total_dict, indent):
+def format_stylish(total_dict):
+    indent = 1
+    return format_stylish_internal(total_dict, indent)
+
+
+def format_stylish_internal(total_dict, indent):
     all_keys = tuple(sorted(total_dict))
 
     result_string = '{\n'
@@ -14,8 +18,8 @@ def format_stylish(total_dict, indent):
 
         if isinstance(total_dict[key], dict):
             temp_indent = indent + 3
-            temp_value = format_stylish(total_dict[key],
-                                        indent + 4)
+            temp_value = format_stylish_internal(total_dict[key],
+                                                 indent + 4)
             prefix1 = ''
         elif total_dict[key][0] == 'changed':
             prefix1, prefix2, temp_value, additional_string = \
@@ -24,8 +28,8 @@ def format_stylish(total_dict, indent):
                                    key, indent)
         elif isinstance(total_dict[key][1], dict):
             prefix1 = map_prefix(total_dict[key][0])
-            temp_value = format_stylish(total_dict[key][1],
-                                        indent + 4)
+            temp_value = format_stylish_internal(total_dict[key][1],
+                                                 indent + 4)
         else:
             prefix1 = map_prefix(total_dict[key][0])
             temp_value = bool_to_str(str(total_dict[key][1]))
@@ -42,14 +46,14 @@ def get_changed_values(new_value, old_value, key, indent):
     if isinstance(new_value, dict):
         prefix1 = ' - '
         prefix2 = ' + '
-        temp_value = format_stylish(new_value, indent + 4)
+        temp_value = format_stylish_internal(new_value, indent + 4)
         old_value = bool_to_str(str(old_value))
 
     elif isinstance(old_value, dict):
         prefix1 = ' - '
         prefix2 = ' + '
         temp_value = bool_to_str(str(new_value))
-        old_value = format_stylish(old_value, indent + 4)
+        old_value = format_stylish_internal(old_value, indent + 4)
 
     else:
         prefix1 = ' - '
@@ -60,3 +64,11 @@ def get_changed_values(new_value, old_value, key, indent):
     total_indent = ' ' * indent
     additional_string = f"{total_indent}{prefix2}{str(key)}: {old_value}\n"
     return prefix1, prefix2, temp_value, additional_string
+
+
+def map_prefix(status):
+    prefix_dict = {'removed': ' - ',
+                   'added': ' + ',
+                   'unchanged': '   ',
+                   'changed': ' '}
+    return prefix_dict[status]

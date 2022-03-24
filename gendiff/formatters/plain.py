@@ -1,4 +1,4 @@
-from gendiff.data_mapping import bool_to_str
+from gendiff.formatters.data_map import bool_to_str
 
 
 def format_plain(total_dict):
