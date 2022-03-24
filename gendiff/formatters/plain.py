@@ -19,18 +19,21 @@ def format_plain_internal(total_dict, key_parents, lines=''):
 
 def get_list_value(value, each_line, key):
     line = ''
-    if value[0] == 'removed':
+    string_status = value[0]
+    old_value = format_value(value[1])
+
+    if string_status == 'removed':
         line += f"{each_line}{key}' was removed\n"
-    elif value[0] == 'added' and isinstance(value[-1], dict):
+    elif string_status == 'added' and isinstance(old_value, dict):
         line += f"{each_line}{key}" \
                 f"' was added with value: [complex value]\n"
-    elif value[0] == 'added':
+    elif string_status == 'added':
         line += f"{each_line}{key}' was added with value: " \
-                f"{format_value(value[-1])}\n"
-    elif value[0] == 'changed':
+                f"{old_value}\n"
+    elif string_status == 'changed':
+        new_value = format_value(value[2])
         line += f"{each_line}{key}' was updated. " \
-                f"From {format_value(value[1])} to " \
-                f"{format_value(value[2])}\n"
+                f"From {old_value} to {new_value}\n"
     return line
 
 
