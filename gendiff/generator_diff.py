@@ -22,17 +22,14 @@ def generate_diff_dict(new_data, old_data):
     keys_new = new_data.keys()
     keys_old = old_data.keys()
 
-    added = keys_old - keys_new
-    for key in added:
-        diff_dict[key] = ['added',
-                          generate_diff_dict(old_data[key], old_data[key])
-                          if isinstance(old_data[key], dict) else old_data[key]]
-
-    removed = keys_new - keys_old
-    for key in removed:
-        diff_dict[key] = ['removed',
-                          generate_diff_dict(new_data[key], new_data[key])
-                          if isinstance(new_data[key], dict) else new_data[key]]
+    symmetric_diff = keys_old ^ keys_new
+    for key in symmetric_diff:
+        diff_dict[key] = ['added' if key in keys_old else 'removed',
+                          (generate_diff_dict(old_data[key], old_data[key])
+                           if isinstance(old_data[key], dict) else old_data[key]) if key in keys_old
+                          else
+                          (generate_diff_dict(new_data[key], new_data[key])
+                           if isinstance(new_data[key], dict) else new_data[key])]
 
     both = keys_new & keys_old
     for key in both:
